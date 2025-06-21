@@ -1,0 +1,9 @@
+list_strings=('bulbasaur', 'ivysaur', 'venusaur', 'charmander', 'charmeleon')
+
+for word in "${list_strings[@]}"; do
+	name=$(echo "$word" | sed -E 's/,$//g');
+	jq -r '[.forms[].name, (.height), (.weight)] | @tsv' "$name.json" | awk '{printf "%s %.1f %.1f\n", $1, $2/10, $3/10}' | sed '/^[[:space:]]*$/d' >> pokemon_report.csv
+
+
+done
+awk 'BEGIN {heights=0; weights=0} {heights+=$2; weights+=$3} END {print (heights/5) , "m", (weights/5) , "kg"}' pokemon_report.csv;
