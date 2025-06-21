@@ -1,12 +1,13 @@
 list_strings=('bulbasaur', 'ivysaur', 'venusaur', 'charmander', 'charmeleon')
 
-for word in "${list_strings[@]}"; do
+fetch(){
+	word=$1
 	name=$(echo "$word" | sed -E 's/,$//g');
 	echo "Fetching data for $name ..."
 	result='0'
 	for i in {0..3}
 	do
-		curl --fail -sS "https://pokeapi.co/api/v2/pokemon/$name" 1>$name.json 2>error.txt &
+		curl --fail -sS "https://pokeapi.co/api/v2/pokemon/$name" 1>$name.json 2>error.txt
 
 		if [ $? -eq 0 ]; then
 
@@ -16,11 +17,19 @@ for word in "${list_strings[@]}"; do
 			echo "the number of attempts is $i"
 			result='0'
 		fi
-	done
+
+	done 
 	if [ $result -eq '0' ]; then
 		cat error.txt
 	else
 		sleep 5
 		echo "Saved data to pokemon_data/$name.json ✅"
 	fi
+}
+for word in "${list_strings[@]}"; do
+	fetch $word &
+done
+for job in $(jobs -p)
+do
+	kill $job
 done
