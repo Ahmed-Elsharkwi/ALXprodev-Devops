@@ -4,7 +4,7 @@ for word in "${list_strings[@]}"; do
 	name=$(echo "$word" | sed -E 's/,$//g');
 	echo "Fetching data for $name ..."
 	result='0'
-	for i in {1..4}
+	for i in {0..3}
 	do
 		curl --fail -sS "https://pokeapi.co/api/v2/pokemon/$name" 1>$name.json 2>error.txt
 
